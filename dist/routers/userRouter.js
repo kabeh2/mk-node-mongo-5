@@ -4,28 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const User_1 = __importDefault(require("../db/models/User"));
+const index_1 = require("../controllers/index");
+const auth_1 = __importDefault(require("../middleware/auth"));
 const router = express_1.Router();
-router.post("/", async (req, res) => {
-    const user = new User_1.default(req.body);
-    try {
-        await user.save();
-        res.status(201).send(user);
-    }
-    catch (error) {
-        res.status(400).send({ error });
-    }
-});
-router.get("/", async (req, res) => {
-    try {
-        const users = await User_1.default.find({});
-        if (!users) {
-            res.status(400).send({ error: "No users found." });
-        }
-        res.status(200).send(users);
-    }
-    catch (error) {
-        res.status(500).send({ error });
-    }
-});
+router.post("/", index_1.addUser);
+router.post("/login", index_1.loginUser);
+router.get("/me", auth_1.default, index_1.readUser);
 exports.default = router;
